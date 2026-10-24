@@ -1,0 +1,15 @@
+{
+    "pagination": {"object_count": 2, "page_number": 2, "page_size": 1, "page_count": 2, "has_more_items": false},
+    "events": [
+        {
+            "name": {"text": "Lecture sous les arbres", "html": "Lecture sous les arbres"},
+            "id": "100000000002",
+            "url": "https://www.eventbrite.fr/e/lecture-sous-les-arbres-tickets-100000000002",
+            "start": {"timezone": "Europe/Paris", "local": "2099-08-01T15:00:00", "utc": "2099-08-01T13:00:00Z"},
+            "end": {"timezone": "Europe/Paris", "local": "2099-08-01T17:00:00", "utc": "2099-08-01T15:00:00Z"},
+            "status": "live",
+            "capacity": 40,
+            "ticket_availability": {"has_available_tickets": false, "is_sold_out": true, "minimum_ticket_price": {"currency": "EUR", "value": 0, "major_value": "0.00", "display": "0.00 EUR"}}
+        }
+    ]
+}

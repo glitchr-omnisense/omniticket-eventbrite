@@ -1,0 +1,7 @@
+{
+    "pagination": {"object_count": 2, "page_number": 1, "page_size": 50, "page_count": 1, "has_more_items": false},
+    "ticket_classes": [
+        {"id": "300000000001", "name": "Plein tarif", "cost": {"currency": "EUR", "value": 2500, "major_value": "25.00", "display": "25.00 EUR"}, "free": false, "quantity_total": 200, "quantity_sold": 150, "on_sale_status": "AVAILABLE", "sales_start": "2099-05-01T08:00:00Z", "sales_end": "2099-07-14T17:00:00Z", "event_id": "100000000001"},
+        {"id": "300000000002", "name": "Étudiant", "cost": {"currency": "EUR", "value": 1200, "major_value": "12.00", "display": "12.00 EUR"}, "free": false, "quantity_total": 100, "quantity_sold": 100, "on_sale_status": "SOLD_OUT", "event_id": "100000000001"}
+    ]
+}

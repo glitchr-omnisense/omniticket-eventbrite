@@ -1,0 +1,26 @@
+{
+    "pagination": {"object_count": 2, "page_number": 1, "page_size": 1, "page_count": 2, "continuation": "example-continuation-2", "has_more_items": true},
+    "events": [
+        {
+            "name": {"text": "Jazz au jardin", "html": "Jazz au jardin"},
+            "id": "100000000001",
+            "url": "https://www.eventbrite.fr/e/jazz-au-jardin-tickets-100000000001",
+            "start": {"timezone": "Europe/Paris", "local": "2099-07-14T19:00:00", "utc": "2099-07-14T17:00:00Z"},
+            "end": {"timezone": "Europe/Paris", "local": "2099-07-14T23:00:00", "utc": "2099-07-14T21:00:00Z"},
+            "organization_id": "200000000001",
+            "status": "live",
+            "currency": "EUR",
+            "online_event": false,
+            "capacity": 300,
+            "venue": {"name": "Jardin des deux rives", "address": {"city": "Strasbourg", "country": "FR", "localized_address_display": "Rue des Cavaliers, 67100 Strasbourg"}},
+            "ticket_availability": {
+                "has_available_tickets": true,
+                "minimum_ticket_price": {"currency": "EUR", "value": 1200, "major_value": "12.00", "display": "12.00 EUR"},
+                "maximum_ticket_price": {"currency": "EUR", "value": 2500, "major_value": "25.00", "display": "25.00 EUR"},
+                "is_sold_out": false,
+                "start_sales_date": {"timezone": "Europe/Paris", "local": "2026-05-01T10:00:00", "utc": "2026-05-01T08:00:00Z"},
+                "waitlist_available": false
+            }
+        }
+    ]
+}

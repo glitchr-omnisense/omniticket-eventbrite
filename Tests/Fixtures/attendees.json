@@ -1,0 +1,8 @@
+{
+    "pagination": {"object_count": 3, "page_number": 1, "page_size": 50, "page_count": 1, "has_more_items": false},
+    "attendees": [
+        {"id": "400000000001", "created": "2099-05-02T09:00:00Z", "changed": "2099-05-02T09:00:00Z", "ticket_class_id": "300000000001", "ticket_class_name": "Plein tarif", "profile": {"first_name": "Jeanne", "last_name": "Dupont", "email": "jeanne@example.org", "name": "Jeanne Dupont"}, "barcodes": [{"barcode": "111111111111111111111", "status": "unused", "created": "2099-05-02T09:00:00Z", "changed": "2099-05-02T09:00:00Z"}], "checked_in": false, "cancelled": false, "refunded": false, "status": "Attending", "event_id": "100000000001", "order_id": "500000000001"},
+        {"id": "400000000002", "ticket_class_name": "Étudiant", "profile": {"first_name": "Paul", "last_name": "Martin", "email": "paul@example.org"}, "barcodes": [{"barcode": "222222222222222222222", "status": "used", "changed": "2099-07-14T17:21:00Z"}], "checked_in": true, "cancelled": false, "refunded": false, "status": "Checked In", "event_id": "100000000001", "order_id": "500000000002"},
+        {"id": "400000000003", "ticket_class_name": "Plein tarif", "profile": {"first_name": "Ana", "last_name": "Lima", "email": "ana@example.org"}, "barcodes": [{"barcode": "333333333333333333333", "status": "refunded"}], "checked_in": false, "cancelled": false, "refunded": true, "status": "Not Attending", "event_id": "100000000001", "order_id": "500000000003"}
+    ]
+}
