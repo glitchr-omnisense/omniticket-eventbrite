@@ -1,6 +1,6 @@
 # omniticket/eventbrite
 
-[omniscient/omniticket](https://github.com/glitchr-studio/omniticket)'s Eventbrite, under any PHP
+[omnisense/omniticket](https://github.com/glitchr-omnisense/omniticket)'s Eventbrite, under any PHP
 host: an organization's events with their ticket classes, price range and availability, the
 attendees of an event (incrementally), and a ticket's barcode checked among them. Reading only.
 
