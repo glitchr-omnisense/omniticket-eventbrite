@@ -32,6 +32,20 @@ keeps the list itself (`attendees()` with `updatedSince`, then `Check::among()`)
 No maintained PHP client of the v3 API was found to reuse (the ones on GitHub are unmaintained
 since 2017-2024 or wrap other HTTP stacks).
 
+## Usage policy
+
+Declared as data in `policy.json` (omnisense/contracts' schema), read on 2026-11-10: 1,000 calls an
+hour per OAuth token ([API Terms of
+Use](https://www.eventbrite.com/support/articleredirect?anum=8483) 3.5, last updated 2025-05-30),
+2,000 an hour and 48,000 a day per application ([rate
+limits](https://www.eventbrite.com/platform/docs/rate-limits)): both hourly figures declared, the
+stricter counts. Storage forbidden in the stricter form (only future events may be stored), access
+to the stand-alone API not redistributed, each event shown with its title and a direct link to its
+Eventbrite page; commercial use unknown (no direct commercial gain, indirect gain allowed: the
+notes say). A listing counts one call, its pages are Eventbrite's calls each. Through omniticket's
+registry every call is checked against it, a 429 and its `Retry-After` hold the next calls, and a
+site may tighten it, never loosen it.
+
 ## Verified, and not
 
 - Verified (the core's harness, PHP 8.4): events across two pages, statuses (on sale, sold out,

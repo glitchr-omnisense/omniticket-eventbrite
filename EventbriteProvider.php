@@ -2,6 +2,9 @@
 
 namespace Omniticket\Eventbrite;
 
+use Omnisense\Contracts\Policy\Backoff;
+use Omnisense\Contracts\Policy\DeclaresUsagePolicyInterface;
+use Omnisense\Contracts\Policy\UsagePolicy;
 use Omniticket\AttendeeListInterface;
 use Omniticket\Capabilities;
 use Omniticket\EventCatalogInterface;
@@ -26,8 +29,13 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  * /events/{id}/attendees/, with a bearer token; pages followed by their
  * continuation. Reading only.
  */
-final class EventbriteProvider implements EventCatalogInterface, AttendeeListInterface, TicketCheckInterface
+final class EventbriteProvider implements EventCatalogInterface, AttendeeListInterface, TicketCheckInterface, DeclaresUsagePolicyInterface
 {
+    /** Eventbrite's usage policy, as its terms read on the day it says (provenance.verifiedAt). */
+    public const POLICY = __DIR__.'/policy.json';
+
+    private static ?UsagePolicy $policy = null;
+
     private const EXPAND = 'ticket_availability,venue';
 
     private readonly JsonApi $api;
@@ -37,8 +45,9 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
         #[\SensitiveParameter] private readonly string $token,
         private readonly string $organization,
         private readonly string $url = 'https://www.eventbriteapi.com/v3',
+        ?Backoff $backoff = null,
     ) {
-        $this->api = new JsonApi($http, 'Eventbrite');
+        $this->api = new JsonApi($http, 'Eventbrite', $backoff);
     }
 
     public function getName(): string
@@ -51,6 +60,11 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
         return 'Eventbrite';
     }
 
+    public function usagePolicy(): UsagePolicy
+    {
+        return self::$policy ??= UsagePolicy::fromFile(self::POLICY);
+    }
+
     public function capabilities(): Capabilities
     {
         return new Capabilities(
@@ -60,6 +74,7 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
             incremental: true,
             terms: ['https://www.eventbrite.com/platform/api'],
             limits: ['per token: 2,000 calls an hour, 48,000 a day (figures as Eventbrite publishes them; not re-checked on 2026-10-24)'],
+            policy: $this->usagePolicy(),
         );
     }
 

@@ -38,6 +38,7 @@ final class EventbriteFactory extends ProviderFactory
             (string) $c->string('token'),
             (string) $c->string('organization'),
             rtrim($c->string('url') ?? 'https://www.eventbriteapi.com/v3', '/'),
+            backoff: $c->backoff(),
         );
     }
 }

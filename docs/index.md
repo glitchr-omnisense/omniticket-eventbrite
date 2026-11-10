@@ -102,6 +102,20 @@ answered 429 for event "1": Hourly rate limit has been reached for this token.`
   as its code.
 - A network failure: `UnreachableException`.
 
+## Usage policy
+
+Declared as data in `policy.json` (omnisense/contracts' schema), read on 2026-11-10: 1,000 calls an
+hour per OAuth token ([API Terms of
+Use](https://www.eventbrite.com/support/articleredirect?anum=8483) 3.5, last updated 2025-05-30),
+2,000 an hour and 48,000 a day per application ([rate
+limits](https://www.eventbrite.com/platform/docs/rate-limits)): both hourly figures declared, the
+stricter counts. Storage forbidden in the stricter form (only future events may be stored), access
+to the stand-alone API not redistributed, each event shown with its title and a direct link to its
+Eventbrite page; commercial use unknown (no direct commercial gain, indirect gain allowed: the
+notes say). A listing counts one call, its pages are Eventbrite's calls each. Through omniticket's
+registry every call is checked against it, a 429 and its `Retry-After` hold the next calls, and a
+site may tighten it, never loosen it.
+
 ## Verified, and not
 
 `Tests/EventbriteProviderTest.php`, against answers composed from the objects Eventbrite's API

@@ -1,0 +1,61 @@
+{
+    "$schema": "https://github.com/glitchr-omnisense/contracts/blob/1.x/resources/usage-policy.schema.json",
+    "provider": "eventbrite",
+    "rateLimits": [
+        {
+            "max": 1000,
+            "window": "hour",
+            "scope": "key",
+            "operations": [],
+            "note": "API Terms of Use 3.5 (last updated 2025-05-30): \"The rate limit is 1000 calls per hour on each OAuth token\"; lower for some actions."
+        },
+        {
+            "max": 2000,
+            "window": "hour",
+            "scope": "application",
+            "operations": [],
+            "note": "platform/docs/rate-limits: \"2,000 calls/hour\" by default for every integrated application."
+        },
+        {
+            "max": 48000,
+            "window": "day",
+            "scope": "application",
+            "operations": [],
+            "note": "platform/docs/rate-limits: \"48,000 calls/day\" by default."
+        }
+    ],
+    "rights": {
+        "commercial": "unknown",
+        "openSourceRequired": null,
+        "caching": {
+            "permission": "unknown",
+            "maxTtl": null
+        },
+        "storage": "forbidden",
+        "redistribution": "forbidden",
+        "attribution": {
+            "required": true,
+            "text": null,
+            "url": null,
+            "where": [
+                "display"
+            ]
+        },
+        "licence": null
+    },
+    "requirements": {
+        "key": true,
+        "userAgent": {
+            "required": false,
+            "pattern": null
+        }
+    },
+    "provenance": {
+        "terms": "https://www.eventbrite.com/support/articleredirect?anum=8483",
+        "policy": "https://www.eventbrite.com/platform/docs/rate-limits",
+        "verifiedAt": "2026-11-10",
+        "declaredBy": "maintainer",
+        "contact": null,
+        "notes": "Two figures for the hour: the API Terms of Use say 1,000 calls per OAuth token, the rate limits page 2,000 per application; both declared, the stricter counts. Each call counts one listing, not its pages (Eventbrite counts every request): a listing of several pages costs that many of Eventbrite's calls. Write actions (create, copy, publish an event, an event schedule) are 200 calls an hour each; this package only reads. Commercial use: no \"direct commercial or monetary gain\" from the APIs or the content, indirect gain supporting the application allowed, no competing product (3.6): the schema's one flag cannot hold that split, so unknown. Storage: only content about future events, none about past events without the user's permission (3.1), everything deleted within 30 days of termination (2.2) or when a user revokes consent (4.2): declared forbidden, the stricter form. Redistribution: no access to the stand-alone APIs (2.1). Attribution: listings show the event's title and a direct link to its Eventbrite page, without nofollow; the application uses its own name and says it is not Eventbrite's (3.2, 3.3). Limits may change at Eventbrite's discretion; a 429 holds the calls."
+    }
+}
