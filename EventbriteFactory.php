@@ -2,6 +2,7 @@
 
 namespace Omniticket\Eventbrite;
 
+use Omnisense\Contracts\Policy\UsagePolicy;
 use Omniticket\Config;
 use Omniticket\Exception\InvalidConfigException;
 use Omniticket\ProviderFactory;
@@ -39,6 +40,7 @@ final class EventbriteFactory extends ProviderFactory
             (string) $c->string('organization'),
             rtrim($c->string('url') ?? 'https://www.eventbriteapi.com/v3', '/'),
             backoff: $c->backoff(),
+            pages: $c->guard(UsagePolicy::fromFile(EventbriteProvider::POLICY)),
         );
     }
 }

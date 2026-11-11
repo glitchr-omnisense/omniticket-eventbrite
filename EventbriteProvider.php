@@ -4,6 +4,7 @@ namespace Omniticket\Eventbrite;
 
 use Omnisense\Contracts\Policy\Backoff;
 use Omnisense\Contracts\Policy\DeclaresUsagePolicyInterface;
+use Omnisense\Contracts\Policy\PolicyGuard;
 use Omnisense\Contracts\Policy\UsagePolicy;
 use Omniticket\AttendeeListInterface;
 use Omniticket\Capabilities;
@@ -46,6 +47,8 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
         private readonly string $organization,
         private readonly string $url = 'https://www.eventbriteapi.com/v3',
         ?Backoff $backoff = null,
+        /** the provider's guard for a listing's further pages (Config::guard()); null: not counted */
+        private readonly ?PolicyGuard $pages = null,
     ) {
         $this->api = new JsonApi($http, 'Eventbrite', $backoff);
     }
@@ -80,13 +83,13 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
 
     public function events(EventQuery $query = new EventQuery()): iterable
     {
-        return $query->filter($this->paged('/organizations/'.rawurlencode($this->organization).'/events/', ['expand' => self::EXPAND, 'order_by' => 'start_asc', 'time_filter' => $query->past ? 'all' : 'current_future'], 'events', 'the events', fn (Data $event) => $this->toEvent($event)));
+        return $query->filter($this->paged('events', '/organizations/'.rawurlencode($this->organization).'/events/', ['expand' => self::EXPAND, 'order_by' => 'start_asc', 'time_filter' => $query->past ? 'all' : 'current_future'], 'events', 'the events', fn (Data $event) => $this->toEvent($event)));
     }
 
     public function event(string $id): Event
     {
         $event = $this->get('/events/'.rawurlencode($id).'/', ['expand' => self::EXPAND], 'event "'.$id.'"');
-        $rates = [...$this->paged('/events/'.rawurlencode($id).'/ticket_classes/', [], 'ticket_classes', 'the ticket classes of event "'.$id.'"', static function (Data $class): Rate {
+        $rates = [...$this->paged('event', '/events/'.rawurlencode($id).'/ticket_classes/', [], 'ticket_classes', 'the ticket classes of event "'.$id.'"', static function (Data $class): Rate {
             $total = $class->int('quantity_total');
             $sold = $class->int('quantity_sold');
 
@@ -111,7 +114,7 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
     {
         $query = null !== $updatedSince ? ['changed_since' => $updatedSince->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z')] : [];
 
-        return $this->paged('/events/'.rawurlencode($eventId).'/attendees/', $query, 'attendees', 'the attendees of event "'.$eventId.'"', static function (Data $attendee) use ($eventId): Attendee {
+        return $this->paged('attendees', '/events/'.rawurlencode($eventId).'/attendees/', $query, 'attendees', 'the attendees of event "'.$eventId.'"', static function (Data $attendee) use ($eventId): Attendee {
             $barcode = $attendee->list('barcodes')[0] ?? new Data();
 
             return new Attendee(
@@ -186,7 +189,9 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
     }
 
     /**
-     * Every page of a list, by continuation.
+     * Every page of a list, by continuation: the first as the registry's call
+     * of $operation counts it, each further one through the provider's guard,
+     * checked before it is requested.
      *
      * @template T
      *
@@ -195,11 +200,12 @@ final class EventbriteProvider implements EventCatalogInterface, AttendeeListInt
      *
      * @return \Generator<int, T>
      */
-    private function paged(string $path, array $query, string $key, string $what, \Closure $map): \Generator
+    private function paged(string $operation, string $path, array $query, string $key, string $what, \Closure $map): \Generator
     {
         $continuation = null;
         do {
-            $page = $this->get($path, $query + (null !== $continuation ? ['continuation' => $continuation] : []), $what);
+            $fetch = fn (): Data => $this->get($path, $query + (null !== $continuation ? ['continuation' => $continuation] : []), $what);
+            $page = null === $continuation || null === $this->pages ? $fetch() : $this->pages->call($operation, $fetch);
             foreach ($page->list($key) as $line) {
                 yield $map($line);
             }

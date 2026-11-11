@@ -89,6 +89,29 @@ final class PolicyTest extends TestCase
         self::registry(RecordedHttpClient::routes([]), ['rateLimits' => [['max' => 5000, 'window' => 'hour', 'scope' => 'key']]])->catalog('box');
     }
 
+    public function testEachFurtherPageIsCountedAndOneOverTheLimitNeverRequested(): void
+    {
+        $http = new RecordedHttpClient(static function (string $method, string $url, array $options): array {
+            $query = \is_array($options['query'] ?? null) ? $options['query'] : [];
+
+            return [200, (string) file_get_contents(__DIR__.'/Fixtures/'.(isset($query['continuation']) ? 'events-page-2' : 'events-page-1').'.json')];
+        });
+        $registry = self::registry($http, ['rateLimits' => [['max' => 1, 'window' => 'day', 'operations' => ['events']]]]);
+
+        $events = $registry->catalog('box')->events();
+        $read = [];
+        try {
+            foreach ($events as $event) {
+                $read[] = $event->id;
+            }
+            self::fail('The second page went out over the limit.');
+        } catch (UsageLimitReachedException $e) {
+            self::assertSame('1/day/application/events', $e->limit?->id());
+        }
+        self::assertSame(['100000000001'], $read, 'the first page read, the second refused');
+        self::assertCount(1, $http->requests, 'the second page never requested');
+    }
+
     /** @param array<string, mixed> $policy */
     private static function registry(RecordedHttpClient $http, array $policy = []): Registry
     {
