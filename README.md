@@ -4,6 +4,37 @@
 host: an organization's events with their ticket classes, price range and availability, the
 attendees of an event (incrementally), and a ticket's barcode checked among them. Reading only.
 
+## Install and a first call
+
+```sh
+composer require omniticket/eventbrite
+```
+
+No account for this first call: Eventbrite's answer is recorded (`Omniticket\Testing\RecordedHttpClient`
+answers in place of the API), so nothing leaves the process. A real call needs an Eventbrite
+account: a private token (or an OAuth token) and the organization's id.
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omniticket\Eventbrite\EventbriteFactory;
+use Omniticket\Testing\RecordedHttpClient;
+
+// Eventbrite's answer, recorded: nothing sent. HttpClient::create() (symfony/http-client) for a real call.
+$http = RecordedHttpClient::routes([
+    'GET /events/' => '{"pagination": {"has_more_items": false}, "events": [{"id": "100000000001", "name": {"text": "Jazz au jardin"}, "url": "https://www.eventbrite.fr/e/jazz-au-jardin-tickets-100000000001", "start": {"timezone": "Europe/Paris", "local": "2036-07-14T19:00:00", "utc": "2036-07-14T17:00:00Z"}, "end": {"timezone": "Europe/Paris", "local": "2036-07-14T23:00:00", "utc": "2036-07-14T21:00:00Z"}, "status": "live", "currency": "EUR"}]}',
+]);
+$eventbrite = (new EventbriteFactory($http))->create(['token' => 'recorded', 'organization' => '200000000001']);
+
+foreach ($eventbrite->events() as $event) {
+    echo $event->title, ' ', $event->start?->format('d/m/Y H:i'), ' ', $event->url, "\n";   // Jazz au jardin 14/07/2036 17:00 (UTC) https://www.eventbrite.fr/e/...
+}
+```
+
+With your token, through the family's registry:
+
 ```php
 use Omniticket\Eventbrite\EventbriteFactory;
 use Omniticket\Registry;
